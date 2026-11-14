@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FreeHtml</string>
+    <string name="app_tagline">Tu código, sin anuncios.</string>
+
+    <string name="nav_home">Inicio</string>
+    <string name="nav_history">Historial</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <string name="home_hero_title">Abre, edita y previsualiza</string>
+    <string name="home_hero_subtitle">HTML, TXT, JSON, CSS, JS, PDF y Word. Todo en local, sin cuentas ni anuncios.</string>
+    <string name="load_file">Cargar archivo</string>
+    <string name="new_file">Nuevo archivo</string>
+    <string name="recent_files">Archivos recientes</string>
+    <string name="recent_files_hint">Los archivos que abras aparecerán aquí.</string>
+    <string name="no_recent_files">Aún no hay archivos recientes</string>
+    <string name="unsupported_file">Formato no compatible: %1$s</string>
+
+    <string name="new_file_title">Crear archivo</string>
+    <string name="new_file_name">Nombre del archivo</string>
+    <string name="new_file_type">Tipo</string>
+    <string name="create">Crear</string>
+    <string name="cancel">Cancelar</string>
+    <string name="new_file_error">No se pudo crear el archivo.</string>
+
+    <string name="history_title">Historial</string>
+    <string name="history_empty">Todavía no has abierto ningún archivo.</string>
+    <string name="history_empty_hint">Cuando lo hagas, aparecerá aquí para volver a él rápidamente.</string>
+    <string name="history_select">Seleccionar</string>
+    <string name="history_cancel_selection">Cancelar</string>
+    <string name="history_select_all">Seleccionar todo</string>
+    <string name="history_deselect_all">Deseleccionar todo</string>
+    <string name="history_delete_selected">Eliminar (%1$d)</string>
+    <string name="history_delete_title">¿Eliminar archivos?</string>
+    <plurals name="history_delete_message">
+        <item quantity="one">Se eliminará %1$d archivo del historial y se liberará su permiso de acceso. El archivo original no se borrará.</item>
+        <item quantity="other">Se eliminarán %1$d archivos del historial y se liberarán sus permisos de acceso. Los archivos originales no se borrarán.</item>
+    </plurals>
+    <string name="history_delete_confirm">Eliminar</string>
+    <string name="history_deleted">Archivos eliminados del historial.</string>
+
+    <string name="editor_title">Archivo</string>
+    <string name="editor_back">Volver</string>
+    <string name="editor_save">Guardar</string>
+    <string name="editor_saved">Cambios guardados.</string>
+    <string name="editor_save_error">No se pudo guardar el archivo.</string>
+    <string name="editor_tab_view">View</string>
+    <string name="editor_tab_edit">Edit</string>
+    <string name="editor_tab_preview">Preview</string>
+    <string name="editor_toggle_highlight">Alternar resaltado de sintaxis</string>
+    <string name="editor_action_copy">Copiar</string>
+    <string name="editor_action_share">Compartir</string>
+    <string name="editor_action_inspect">Inspeccionar</string>
+    <string name="editor_action_reload">Recargar</string>
+    <string name="editor_action_fullscreen">Pantalla completa</string>
+    <string name="editor_action_fullscreen_short">Completa</string>
+    <string name="editor_action_search">Buscar</string>
+    <string name="editor_action_zoom">Zoom</string>
+    <string name="editor_search_hint">Buscar en el código…</string>
+    <string name="editor_info_strip">Líneas: %1$d · Peso: %2$s · Elementos: %3$d</string>
+    <string name="editor_exit_fullscreen">Salir de pantalla completa</string>
+    <string name="editor_copied">Código copiado.</string>
+    <string name="editor_inspect_title">Código fuente</string>
+
+    <string name="folder_access_title">Acceso a la carpeta</string>
+    <string name="folder_access_message">Este archivo HTML carga otros archivos de su carpeta (CSS, JavaScript, etc.). Para mostrar el sitio completo, FreeHtml necesita acceso de lectura a esa carpeta. Los archivos no se modifican ni se suben a ningún sitio.</string>
+    <string name="folder_access_select">Seleccionar carpeta</string>
+    <string name="folder_access_later">Ahora no</string>
+    <string name="editor_empty_title">Archivo vacío</string>
+    <string name="editor_empty_message">Este archivo no tiene contenido todavía.</string>
+    <string name="editor_error_title">No se pudo abrir el archivo</string>
+    <string name="editor_error_unsupported">El formato del archivo no es compatible.</string>
+    <string name="editor_error_read">No se pudo leer el contenido. Comprueba que el archivo siga disponible.</string>
+    <string name="editor_retry">Reintentar</string>
+    <string name="pdf_error_message">No se pudo cargar el PDF. Comprueba que el archivo siga disponible.</string>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_general">GENERAL</string>
+    <string name="settings_section_appearance">APARIENCIA</string>
+    <string name="settings_section_about">ACERCA DE</string>
+
+    <string name="settings_recent_history">Historial de archivos recientes</string>
+    <string name="settings_no_recent_files">Sin archivos recientes</string>
+    <plurals name="settings_recent_files_count">
+        <item quantity="one">%1$d archivo</item>
+        <item quantity="other">%1$d archivos</item>
+    </plurals>
+    <string name="settings_clear_history">Limpiar</string>
+    <string name="settings_clear_history_title">¿Limpiar historial?</string>
+    <string name="settings_clear_history_message">Se eliminarán los archivos recientes de la lista y sus permisos de acceso. Los archivos originales no se borrarán.</string>
+    <string name="settings_clear_history_confirm">Limpiar historial</string>
+    <string name="history_cleared">Historial limpiado.</string>
+
+    <string name="settings_theme_force_light">Forzar tema claro</string>
+    <string name="settings_theme_current">Actual: %1$s</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_use_system">Usar tema del sistema</string>
+    <string name="settings_theme_help">El interruptor fuerza el tema claro u oscuro. Usa “Sistema” para seguir el tema del dispositivo.</string>
+
+    <string name="settings_open_source_title">Open Source</string>
+    <string name="settings_open_source_description">FreeHtml es gratuito, sin anuncios y con código abierto. Si te resulta útil, puedes seguir el proyecto en GitHub.</string>
+    <string name="settings_github">Ver en GitHub</string>
+    <string name="settings_version">Versión %1$s (%2$d)</string>
+
+    <string name="settings_incognito_title">Modo incógnito</string>
+    <string name="settings_incognito_description">No guarda archivos en el historial y no escribe los cambios en el disco.</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_change">Cambiar</string>
+    <string name="settings_language_system">Sistema</string>
+    <string name="settings_language_spanish">Español</string>
+    <string name="settings_language_english">Inglés</string>
+    <string name="settings_language_french">Francés</string>
+    <string name="settings_language_portuguese">Portugués</string>
+    <string name="settings_default_zoom_title">Zoom por defecto</string>
+    <string name="settings_default_zoom_description">Tamaño inicial del texto del código en el editor.</string>
+    <string name="settings_link_error">No se pudo abrir el enlace.</string>
+</resources>

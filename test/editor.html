@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.P.T vlog — editor (uso local)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cobalt:#0050EF;
+    --teal:#00ABA9;
+    --orange:#FA6800;
+    --violet:#6A00FF;
+    --magenta:#D80073;
+    --steel:#647687;
+    --green:#60A917;
+    --ink:#F2F2F2;
+    --ink-dim:#c9d6e3;
+    --muted:#7f92a6;
+    --glass-line:rgba(255,255,255,0.45);
+    --font-code:'JetBrains Mono', monospace;
+    --bg-grad:
+      radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.25), rgba(255,255,255,0) 45%),
+      linear-gradient(180deg, #4E9BD6 0%, #2C6FB0 30%, #164F8E 60%, #0B2E5C 100%);
+    --detail-bg: #0050ef;
+    --detail-ink: #fff;
+  }
+
+  /* modo oscuro — mismo que index.html */
+  body.dark-mode{
+    --ink:#E8EEF4;
+    --ink-dim:#8fa6bc;
+    --glass-line:rgba(255,255,255,0.18);
+    --bg-grad:
+      radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.06), rgba(255,255,255,0) 45%),
+      linear-gradient(180deg, #1a2a3a 0%, #0f1e2e 35%, #080f1a 70%, #030810 100%);
+    --detail-bg: #0a1f3a;
+    --detail-ink: #c9dff5;
+  }
+  body.dark-mode .glass{
+    background:linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.02) 45%,rgba(255,255,255,0.06));
+    border-color:var(--glass-line);
+  }
+  body.dark-mode .field input[type="text"],
+  body.dark-mode .field input[type="date"],
+  body.dark-mode .field select,
+  body.dark-mode .field textarea{
+    background:rgba(20,35,55,0.88);
+    color:#d8eaf8;
+    border-color:rgba(255,255,255,0.2);
+  }
+  body.dark-mode .field input::placeholder,
+  body.dark-mode .field textarea::placeholder{ color:#4e6a84; }
+  body.dark-mode .newcat-row input[type="color"]{
+    background:rgba(20,35,55,0.88);
+    border-color:rgba(255,255,255,0.2);
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  html,body{
+    margin:0; min-height:100%;
+    color:var(--ink);
+    font-family:'Segoe UI', 'Segoe UI Historic', Tahoma, Roboto, 'Helvetica Neue', Arial, sans-serif;
+    transition:background .3s, color .2s;
+  }
+  body{
+    background: var(--bg-grad);
+    background-attachment:fixed;
+    padding-bottom:40px;
+  }
+  ::selection{ background:var(--cobalt); color:#fff; }
+  .wrap{ max-width:680px; margin:0 auto; padding:0 16px; }
+
+  /* ---------------- glass utility (idéntico al sitio público) ---------------- */
+  .glass{
+    background:linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.16));
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--glass-line);
+    border-radius:6px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.75),
+      inset 0 -1px 0 rgba(255,255,255,0.15),
+      0 10px 28px rgba(0,15,40,0.35);
+  }
+
+  /* ---------------- header ---------------- */
+  header{
+    margin:22px 0 16px;
+    padding:16px 20px;
+  }
+  .wordmark{
+    font-family:'Segoe UI Semilight','Segoe UI Light','Segoe UI',Tahoma,sans-serif;
+    font-weight:400;
+    font-size:clamp(1.4rem, 5.5vw, 1.9rem);
+    letter-spacing:0.01em;
+    margin:0;
+    color:#fff;
+    text-shadow:0 1px 3px rgba(0,20,50,0.55);
+    display:flex; align-items:center; gap:10px;
+  }
+  .subtitle{ font-size:0.78rem; color:var(--ink-dim); margin-top:2px; }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--ink-dim); text-decoration:none; font-size:0.8rem;
+    margin-top:10px;
+  }
+  .back-link:hover, .back-link:focus-visible{ color:#fff; }
+
+  .warn{
+    border-left:4px solid var(--orange);
+    padding:14px 16px;
+    font-size:0.85rem;
+    color:var(--ink-dim);
+    line-height:1.65;
+    margin:18px 0 24px;
+  }
+  .warn b{ color:#fff; }
+  .warn code{
+    font-family:var(--font-code); font-size:0.82em;
+    background:rgba(0,0,0,0.22); padding:1px 5px; border-radius:3px;
+  }
+
+  main section{
+    padding:18px 20px 22px;
+    margin-bottom:18px;
+  }
+
+  h2{
+    font-weight:600; font-size:1.05rem;
+    margin:0 0 16px;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(255,255,255,0.25);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  /* número de paso en cada sección */
+  .step-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px; height:24px;
+    border-radius:50%;
+    background:var(--cobalt);
+    font-size:0.75rem;
+    font-weight:700;
+    flex-shrink:0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  /* toggle modo oscuro en el header */
+  .theme-toggle{
+    margin-top:10px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.3);
+    color:var(--ink-dim);
+    font-family:inherit;
+    font-size:0.78rem;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:background .12s;
+  }
+  .theme-toggle:hover{ background:rgba(255,255,255,0.22); color:#fff; }
+
+  /* selector de imagen para el tile */
+  .tile-thumb-picker{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:8px;
+  }
+  .tile-thumb-opt{
+    position:relative;
+    width:64px; height:64px;
+    border:2px solid rgba(255,255,255,0.2);
+    border-radius:4px;
+    overflow:hidden;
+    cursor:pointer;
+    background:#111;
+    transition:border-color .12s;
+    flex-shrink:0;
+  }
+  .tile-thumb-opt img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .tile-thumb-opt.selected{ border-color:#fff; box-shadow:0 0 0 2px var(--cobalt); }
+  .tile-thumb-opt .checkmark{
+    display:none;
+    position:absolute; inset:0;
+    background:rgba(0,80,239,0.55);
+    align-items:center; justify-content:center;
+    font-size:1.3rem;
+  }
+  .tile-thumb-opt.selected .checkmark{ display:flex; }
+  .tile-thumb-none{
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.65rem; font-weight:700; color:var(--ink-dim);
+    background:rgba(255,255,255,0.06);
+    text-align:center; line-height:1.3;
+  }
+
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block; font-size:0.78rem;
+    font-weight:600;
+    color:var(--ink-dim); margin-bottom:6px;
+  }
+  .field .req{ color:var(--orange); }
+  .field input[type="text"], .field input[type="date"],
+  .field select, .field textarea{
+    width:100%;
+    background:rgba(255,255,255,0.88);
+    border:1px solid rgba(255,255,255,0.6);
+    border-radius:4px;
+    color:#0f2438;
+    font-family:inherit;
+    font-size:0.95rem;
+    padding:11px 12px;
+    outline:none;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);
+    min-height:44px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.25), 0 0 0 3px rgba(255,255,255,0.55), 0 0 0 5px var(--cobalt);
+  }
+  .field textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+  .field .hint{ font-size:0.75rem; color:var(--ink-dim); margin-top:5px; }
+  .row-2{ display:flex; gap:12px; }
+  .row-2 .field{ flex:1; }
+
+  .btn{
+    font-family:inherit; font-size:0.85rem; font-weight:600;
+    border:none; cursor:pointer; padding:11px 20px;
+    border-radius:3px;
+    min-height:44px;
+    transition:background .12s ease, transform .1s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-add{
+    background:var(--cobalt); color:#fff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .btn-add:hover{ background:#1a63f5; }
+  .btn-ghost{
+    background:linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04));
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.45);
+  }
+  .btn-ghost:hover{ background:linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.08)); }
+  .btn:focus-visible{ outline:3px solid #fff; outline-offset:2px; }
+
+  .newcat-row{ display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
+  .newcat-row .field{ margin-bottom:0; flex:1; min-width:140px; }
+  .newcat-row .color-field{ flex:0 0 auto; }
+  .newcat-row input[type="color"]{
+    width:44px; height:44px; border:1px solid rgba(255,255,255,0.6);
+    border-radius:4px;
+    background:rgba(255,255,255,0.88); padding:3px; cursor:pointer;
+  }
+  .cat-list{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .cat-chip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--cc);
+    color:#fff;
+    font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    padding:8px 8px 8px 12px;
+    border-radius:3px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .cat-chip button{
+    background:rgba(0,0,0,0.18); border:none; color:#fff;
+    width:22px; height:22px; border-radius:50%;
+    cursor:pointer; font-size:0.9rem; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cat-chip button:hover, .cat-chip button:focus-visible{ background:rgba(0,0,0,0.35); }
+  .cat-chip.is-new{ box-shadow:0 0 0 2px #fff, inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 3px rgba(0,0,0,0.25); }
+  .cat-chip .new-flag{
+    font-size:0.62rem; font-weight:700; text-transform:uppercase;
+    background:rgba(255,255,255,0.28); padding:2px 6px; border-radius:2px;
+  }
+
+  .status-tag{
+    display:inline-block;
+    font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    padding:3px 8px; border-radius:2px;
+    margin-top:4px;
+  }
+  .status-tag.pending{ background:rgba(250,104,0,0.85); color:#fff; }
+  .status-tag.published{ background:rgba(96,169,23,0.85); color:#fff; }
+
+  .publish-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; flex-wrap:wrap;
+    margin-bottom:16px;
+    padding:10px 14px;
+    background:rgba(255,255,255,0.1);
+    border-radius:4px;
+    font-size:0.82rem;
+  }
+  .publish-bar .count{ color:#fff; font-weight:600; }
+  .publish-bar .count .n{ color:var(--orange); }
+  .code-note{ font-size:0.78rem; color:var(--ink-dim); line-height:1.6; margin-bottom:10px; }
+  .code-note code{
+    font-family:var(--font-code); font-size:0.9em;
+    background:rgba(0,0,0,0.22); padding:1px 5px; border-radius:3px;
+  }
+
+  .draft-list{ margin-top:6px; }
+  .draft-item{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:10px;
+    padding:13px 14px;
+    border-left:5px solid var(--c, var(--steel));
+    background:rgba(255,255,255,0.12);
+    border-radius:0 4px 4px 0;
+    margin-bottom:6px;
+    font-size:0.88rem;
+    flex-wrap:wrap;
+  }
+  .draft-item .title{ font-weight:600; color:#fff; }
+  .draft-item .sub{ font-size:0.75rem; color:var(--ink-dim); margin-top:2px; }
+  .draft-item .actions{ display:flex; gap:8px; flex-shrink:0; }
+  .draft-item .actions button{
+    background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.3);
+    color:#fff; border-radius:3px;
+    font-size:0.72rem; font-weight:600; text-transform:uppercase;
+    cursor:pointer; padding:8px 12px; min-height:36px;
+  }
+  .draft-item .actions button:hover{ background:rgba(255,255,255,0.28); }
+  .draft-item .actions button.danger:hover{ background:var(--magenta); border-color:transparent; }
+
+  /* selector rápido de categoría (reemplaza el <select>) */
+  .cat-picker{ display:flex; flex-wrap:wrap; gap:8px; }
+  .cat-pick{
+    font-family:inherit; font-size:0.8rem; font-weight:700;
+    padding:9px 14px; border-radius:3px;
+    border:2px solid transparent;
+    background:rgba(255,255,255,0.16);
+    color:#fff;
+    cursor:pointer;
+    min-height:40px;
+  }
+  .cat-pick[aria-checked="true"]{
+    background:var(--cc, var(--cobalt));
+    border-color:#fff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .cat-pick.empty-state{
+    background:transparent; border:1.5px dashed rgba(255,255,255,0.4);
+    color:var(--ink-dim); font-weight:600;
+  }
+
+  /* paleta de colores de fondo para una entrada (estética estilo tiles) */
+  .bg-swatch-grid{ display:flex; flex-wrap:wrap; gap:8px; }
+  .bg-swatch{
+    width:36px; height:36px;
+    border-radius:5px;
+    border:2px solid transparent;
+    cursor:pointer;
+    padding:0;
+    position:relative;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .bg-swatch[aria-checked="true"]{
+    border-color:#fff;
+    box-shadow:0 0 0 2px var(--cobalt), inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .bg-swatch[aria-checked="true"]::after{
+    content:"✓";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:0.95rem;
+    text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  }
+  .bg-swatch.none-opt{
+    background:transparent;
+    border:1.5px dashed rgba(255,255,255,0.4);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.6rem; font-weight:700; color:var(--ink-dim); text-align:center;
+    line-height:1.1;
+  }
+  .bg-swatch.none-opt[aria-checked="true"]{
+    border-style:solid; border-color:#fff;
+    box-shadow:0 0 0 2px var(--cobalt);
+    color:#fff;
+  }
+
+  /* toast de confirmación rápida */
+  .toast{
+    position:fixed; left:50%; bottom:24px; transform:translate(-50%, 12px);
+    background:rgba(10,25,50,0.92);
+    color:#fff; font-size:0.85rem; font-weight:600;
+    padding:12px 20px; border-radius:6px;
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    opacity:0; pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+    z-index:100;
+    max-width:90vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  .empty{ color:var(--ink-dim); font-style:italic; font-size:0.88rem; padding:14px 0; }
+
+  #code-out{
+    width:100%;
+    min-height:240px;
+    background:rgba(4,12,28,0.55);
+    color:#8be9d8;
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:4px;
+    font-family:var(--font-code);
+    font-size:0.78rem;
+    line-height:1.55;
+    padding:16px;
+    white-space:pre;
+    overflow:auto;
+    resize:vertical;
+  }
+  .copy-row{ display:flex; justify-content:space-between; align-items:center; margin:12px 0 0; gap:10px; flex-wrap:wrap; }
+  .copy-msg{ font-size:0.8rem; color:#8be9d8; font-weight:600; }
+  .copy-msg[role="status"]:empty{ display:none; }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible{
+    outline:3px solid #fff; outline-offset:2px;
+  }
+
+  @media (max-width:420px){
+    header{ margin:14px 0 12px; padding:14px 16px; }
+    .row-2{ flex-direction:column; gap:0; }
+    main section{ padding:16px; }
+  }
+.img-item{
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:6px;
+  padding:10px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.img-item .preview-frame{
+  width:150px;
+  height:150px;
+  background:repeating-conic-gradient(#2a2a2a 0% 25%, #333 0% 50%) 50% / 16px 16px;
+  border:1px dashed rgba(255,255,255,0.3);
+  position:relative;
+  overflow:hidden;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.img-item .preview-frame img{
+  position:absolute;
+  object-fit:contain;
+  display:block;
+}
+.img-item .img-controls{ flex:1; min-width:160px; }
+.img-item .img-controls label{ font-size:0.72rem; opacity:0.8; display:block; margin-top:6px; }
+.img-item .img-controls input[type="range"]{ width:100%; }
+.img-item .img-caption-text{ font-size:0.78rem; opacity:0.85; margin-bottom:4px; word-break:break-all; }
+.img-item .img-num{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:20px; height:20px; padding:0 5px;
+  background:var(--cobalt); color:#fff;
+  font-weight:700; font-size:0.7rem;
+  border-radius:3px; margin-right:6px;
+}
+.img-item .img-remove{
+  font-size:0.7rem; color:#ff8a8a; background:none; border:none; cursor:pointer; padding:2px 0;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="glass">
+    <h1 class="wordmark">A.P.T vlog — editor</h1>
+    <div class="subtitle">Herramienta local para armar entradas</div>
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:10px;">
+      <a class="back-link" href="index.html" style="margin-top:0;">← Volver al sitio</a>
+      <button class="theme-toggle" id="theme-btn">🌙 Modo oscuro</button>
+    </div>
+  </header>
+
+  <div class="warn glass" role="note">
+    <b>Flujo para publicar una entrada:</b><br>
+    1. Armá la entrada acá → 2. Copiá el código generado → 3. Pegalo en <code>index.html</code> antes del <code>]</code> → 4. <code>git push</code>
+  </div>
+
+  <main>
+  <section class="glass" aria-labelledby="h-cats">
+    <h2 id="h-cats"><span class="step-num">1</span> Categorías</h2>
+    <div class="newcat-row">
+      <div class="field">
+        <label for="f-cat-name">Nombre de la categoría</label>
+        <input type="text" id="f-cat-name" placeholder="ej. hallazgos">
+      </div>
+      <div class="field color-field">
+        <label for="f-cat-color">Color</label>
+        <input type="color" id="f-cat-color" value="#0050EF">
+      </div>
+      <button type="button" class="btn btn-add" id="add-cat-btn">Agregar</button>
+    </div>
+    <div class="cat-list" id="cat-list" aria-live="polite"></div>
+    <div class="hint" style="margin-top:12px;">Las categorías marcadas <b>NUEVA</b> todavía no están en tu index.html — aparecerán en el código para publicar.</div>
+  </section>
+
+  <section class="glass" aria-labelledby="h-entry">
+    <h2 id="h-entry"><span class="step-num">2</span> Nueva entrada</h2>
+    <form id="entry-form" novalidate>
+      <div class="field">
+        <label for="f-title">Título <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f-title" required aria-required="true">
+      </div>
+      <div class="row-2">
+        <div class="field" style="flex:1.3;">
+          <label id="lbl-category">Categoría <span class="hint" style="display:inline; font-weight:400;">(opcional)</span></label>
+          <div class="cat-picker" id="cat-picker" role="radiogroup" aria-labelledby="lbl-category"></div>
+        </div>
+        <div class="field">
+          <label for="f-date">Fecha <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="f-date" required aria-required="true">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-device">Dispositivo (opcional)</label>
+        <input type="text" id="f-device" placeholder="ej. Redmi Buds 6 Active">
+      </div>
+      <div class="field">
+        <label for="f-summary">Resumen <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="f-summary" required aria-required="true" placeholder="1-2 líneas de resumen"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-body">Contenido (opcional)</label>
+        <textarea id="f-body" placeholder="Un párrafo por línea" aria-describedby="hint-body"></textarea>
+        <div class="hint" id="hint-body">Cada línea se convierte en un párrafo.</div>
+      </div>
+      <div class="field">
+        <label>Imágenes (opcional)</label>
+        <div class="hint" style="margin-bottom:8px;">Sube la imagen a la carpeta /img de tu repo primero y usá esa ruta acá. Varias imágenes se muestran en un carrusel.</div>
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input type="text" id="img-src-input" placeholder="img/nombre.jpg" style="flex:2;">
+          <input type="text" id="img-caption-input" placeholder="descripción (opcional)" style="flex:1;">
+        </div>
+        <button type="button" class="btn btn-ghost" id="img-add-btn">+ Agregar imagen</button>
+        <div id="img-list" style="margin-top:12px; display:flex; flex-direction:column; gap:14px;"></div>
+      </div>
+
+      <div class="field">
+        <label>Imagen del tile <span class="hint" style="display:inline; font-weight:400;">(opcional — cuál aparece de fondo en la lista)</span></label>
+        <div class="tile-thumb-picker" id="tile-thumb-picker">
+          <div class="tile-thumb-opt tile-thumb-none selected" data-thumb-idx="-1">
+            <div class="checkmark">✓</div>
+            <span>Auto<br>(1ª imagen)</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Color de fondo de la entrada <span class="hint" style="display:inline; font-weight:400;">(opcional — si no elegís nada, usa el color de la categoría)</span></label>
+        <div class="bg-swatch-grid" id="bg-swatch-grid" role="radiogroup" aria-label="Color de fondo"></div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+          <input type="color" id="f-bg-custom" value="#0050EF" aria-label="Color personalizado">
+          <span class="hint" style="margin:0;">o elegí un color personalizado</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-tile-aspect">Relación de aspecto del tile (opcional)</label>
+        <select id="f-tile-aspect">
+          <option value="">Cuadrado (por defecto)</option>
+          <option value="4/5">Vertical, 4/5</option>
+          <option value="3/4">Vertical, 3/4</option>
+          <option value="9/16">Vertical, 9/16 (historia)</option>
+          <option value="4/3">Horizontal, 4/3</option>
+          <option value="16/9">Horizontal, 16/9</option>
+        </select>
+        <div class="hint">Ajusta la forma del tile en la lista para que la foto no se recorte tan feo. Solo importa si la entrada tiene imagen.</div>
+      </div>
+      <button type="submit" class="btn btn-add" id="submit-entry-btn">Agregar a la lista</button>
+      <button type="button" class="btn btn-ghost" id="cancel-edit-btn" style="display:none; margin-left:8px;">Cancelar edición</button>
+    </form>
+  </section>
+
+  <section class="glass" aria-labelledby="h-drafts">
+    <h2 id="h-drafts"><span class="step-num">3</span> Entradas en borrador (<span id="draft-count">0</span>)</h2>
+    <div class="draft-list" id="draft-list" aria-live="polite"></div>
+    <div class="publish-bar" style="margin-top:14px;">
+      <button type="button" class="btn btn-ghost" id="export-backup-btn">Exportar copia (.json)</button>
+      <button type="button" class="btn btn-ghost" id="copy-backup-btn">Copiar copia al portapapeles</button>
+      <button type="button" class="btn btn-ghost" id="import-backup-btn">Importar copia (.json)</button>
+      <button type="button" class="btn btn-ghost" id="paste-backup-btn">Importar desde portapapeles</button>
+      <input type="file" id="import-backup-file" accept="application/json" style="display:none;">
+    </div>
+  </section>
+
+  <section class="glass" aria-labelledby="h-code">
+    <h2 id="h-code"><span class="step-num">4</span> Código para publicar</h2>
+    <div class="publish-bar">
+      <span class="count">Pendientes por publicar: <span class="n" id="pending-count">0</span></span>
+      <button type="button" class="btn btn-ghost" id="mark-published-btn">Marcar todo como publicado</button>
+    </div>
+    <div class="field">
+      <div class="code-note">
+        Esto <b>no reemplaza</b> tus arrays. Son solo los objetos nuevos —
+        pégalos <b>dentro</b> de tus arrays <code>CATEGORIES</code> y/o <code>POSTS</code>
+        en <code>index.html</code>, justo antes del corchete de cierre <code>]</code>.
+        Recuerda poner una coma <code>,</code> después de la última entrada que ya
+        tenías, antes de pegar esto.
+      </div>
+      <label for="code-out" class="sr-only">Código generado para pegar en index.html</label>
+      <pre id="code-out" tabindex="0"></pre>
+      <div class="copy-row">
+        <button type="button" class="btn btn-add" id="copy-btn">Copiar código</button>
+        <span class="copy-msg" id="copy-msg" role="status"></span>
+      </div>
+    </div>
+    <div class="hint" style="margin-top:14px;">
+      ¿Primera vez usando el editor y tu <code>index.html</code> todavía tiene los
+      datos de ejemplo? Usa "Marcar todo como publicado" primero en una categoría
+      o entrada vacía de prueba, o simplemente copia el código completo esta única
+      vez y reemplaza el bloque de datos original — después de esa primera vez, ya
+      no vuelvas a reemplazar, solo pega lo nuevo.
+    </div>
+  </section>
+  </main>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* Todo aquí vive en localStorage de ESTE navegador — es tu libreta
+     de trabajo, no el sitio público. */
+  /* Tu index.html ya no trae categorías de fábrica ni la entrada de
+     prueba — arrancas desde cero. Todo lo que agregues aquí empieza
+     como "Pendiente" hasta que lo publiques. */
+  const DEFAULT_CATS = [];
+
+  let CATEGORIES = load('apt-editor-categories', DEFAULT_CATS.slice());
+  let POSTS = load('apt-editor-posts', []);
+  let editingId = null;
+  let selectedCat = load('apt-editor-last-category', null);
+  let currentImages = [];
+  let tileThumbIdx = -1; // -1 = automático (primera imagen)
+  let selectedBgColor = ''; // '' = sin color propio, usa el de la categoría
+
+  // Paleta de colores de fondo para una entrada, en la misma estética
+  // "tiles" del sitio (tonos planos tipo Windows Phone).
+  const BG_PALETTE = [
+    '#A4C400', '#60A917', '#008A00', '#00ABA9', '#1BA1E2',
+    '#0050EF', '#6A00FF', '#AA00FF', '#F472D0', '#D80073',
+    '#A20025', '#E51400', '#FA6800', '#F0A30A', '#825A2C',
+    '#6D8764', '#647687', '#76608A', '#87794E', '#1D1D1D'
+  ];
+
+  function renderBgSwatches(){
+    const wrap = document.getElementById('bg-swatch-grid');
+    const customInput = document.getElementById('f-bg-custom');
+    const isPaletteColor = BG_PALETTE.some(c => c.toLowerCase() === selectedBgColor.toLowerCase());
+    let html = `<button type="button" class="bg-swatch none-opt" data-bg="" role="radio" aria-checked="${selectedBgColor === ''}">AUTO</button>`;
+    html += BG_PALETTE.map(c => `<button type="button" class="bg-swatch" data-bg="${c}" style="background:${c};" role="radio" aria-checked="${selectedBgColor.toLowerCase() === c.toLowerCase()}" aria-label="${c}"></button>`).join('');
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.bg-swatch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedBgColor = btn.dataset.bg;
+        renderBgSwatches();
+      });
+    });
+    if(selectedBgColor && !isPaletteColor){
+      customInput.value = selectedBgColor;
+    }
+  }
+  document.getElementById('f-bg-custom').addEventListener('input', (e) => {
+    selectedBgColor = e.target.value;
+    renderBgSwatches();
+  });
+
+  function toast(msg){
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove('show'), 2600);
+  }
+
+  function load(key, fallback){
+    try{
+      const v = localStorage.getItem(key);
+      return v ? JSON.parse(v) : fallback;
+    }catch(e){ return fallback; }
+  }
+  function save(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }
+    catch(e){ alert('No se pudo guardar en este navegador.'); }
+  }
+  function uid(){
+    return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(16).slice(2));
+  }
+  function slugify(s){
+    return s.toLowerCase().trim()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || uid();
+  }
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function catById(id){ return CATEGORIES.find(c => c.id === id); }
+
+  // Mismo cálculo de contraste que index.html: evita chips de categoría
+  // con letras blancas ilegibles si el color elegido es muy claro.
+  function readableTextColor(bgColor){
+    if(!bgColor || bgColor[0] !== '#') return '#ffffff';
+    let hex = bgColor.slice(1);
+    if(hex.length === 3) hex = hex.split('').map(ch => ch + ch).join('');
+    if(hex.length !== 6) return '#ffffff';
+    const num = parseInt(hex, 16);
+    if(Number.isNaN(num)) return '#ffffff';
+    const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+    const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const luminance = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return luminance > 0.6 ? '#16232f' : '#ffffff';
+  }
+
+  /* ---------------- categorías ---------------- */
+  // Selector rápido de categoría por chips (más ágil que un <select> en móvil).
+  // Incluye un chip "Sin categoría" para entradas que no encajan en ninguna.
+  function renderCatPicker(){
+    const wrap = document.getElementById('cat-picker');
+    if(selectedCat === null || selectedCat === undefined) selectedCat = '';
+    if(selectedCat && !catById(selectedCat)) selectedCat = '';
+    const chips = [`<button type="button" class="cat-pick" role="radio" aria-checked="${selectedCat === '' }"
+        data-pick-cat="" style="--cc:var(--steel);">Sin categoría</button>`]
+      .concat(CATEGORIES.map(c => {
+        const checked = c.id === selectedCat;
+        const inkStyle = checked ? `color:${readableTextColor(c.color)};` : '';
+        return `<button type="button" class="cat-pick" role="radio" aria-checked="${checked}"
+        data-pick-cat="${c.id}" style="--cc:${c.color}; ${inkStyle}">${escapeHtml(c.label)}</button>`;
+      }));
+    wrap.innerHTML = chips.join('');
+    wrap.querySelectorAll('[data-pick-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedCat = btn.dataset.pickCat;
+        save('apt-editor-last-category', selectedCat);
+        renderCatPicker();
+      });
+    });
+  }
+  function renderCatList(){
+    const wrap = document.getElementById('cat-list');
+    if(CATEGORIES.length === 0){
+      wrap.innerHTML = '<span class="empty">Sin categorías todavía.</span>';
+      return;
+    }
+    wrap.innerHTML = CATEGORIES.map(c => `
+      <span class="cat-chip${c.published ? '' : ' is-new'}" style="--cc:${c.color}; color:${readableTextColor(c.color)};">
+        ${c.published ? '' : '<span class="new-flag">Nueva</span>'}
+        ${escapeHtml(c.label)}
+        <button type="button" data-del-cat="${c.id}" aria-label="Eliminar categoría ${escapeHtml(c.label)}">×</button>
+      </span>`).join('');
+    wrap.querySelectorAll('[data-del-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.delCat;
+        if(!confirm('¿Eliminar esta categoría del borrador?')) return;
+        CATEGORIES = CATEGORIES.filter(c => c.id !== id);
+        save('apt-editor-categories', CATEGORIES);
+        renderCatList(); renderCatPicker(); renderCode();
+      });
+    });
+  }
+  document.getElementById('add-cat-btn').addEventListener('click', () => {
+    const nameInput = document.getElementById('f-cat-name');
+    const colorInput = document.getElementById('f-cat-color');
+    const label = nameInput.value.trim();
+    if(!label) return;
+    let id = slugify(label);
+    if(catById(id)) id = id + '-' + uid().slice(0,4);
+    CATEGORIES.push({ id, label, color: colorInput.value, published:false });
+    save('apt-editor-categories', CATEGORIES);
+    selectedCat = id; // la nueva categoría queda lista para usarse de una vez
+    save('apt-editor-last-category', selectedCat);
+    nameInput.value = '';
+    renderCatList(); renderCatPicker(); renderCode();
+    toast('Categoría agregada — ya está seleccionada abajo ↓');
+  });
+
+  /* ---------------- entradas (borrador) ---------------- */
+  function renderDrafts(){
+    const wrap = document.getElementById('draft-list');
+    document.getElementById('draft-count').textContent = POSTS.length;
+    if(POSTS.length === 0){
+      wrap.innerHTML = '<div class="empty">Aún no agregas entradas al borrador.</div>';
+      return;
+    }
+    const sorted = POSTS.slice().sort((a,b) => new Date(b.date) - new Date(a.date));
+    wrap.innerHTML = sorted.map(p => {
+      const cat = catById(p.category);
+      return `
+      <div class="draft-item" style="--c:${cat ? cat.color : '#647687'}">
+        <div>
+          <div class="title">${escapeHtml(p.title)}</div>
+          <div class="sub">${cat ? escapeHtml(cat.label) : 'Sin categoría'} · ${p.date}</div>
+          <span class="status-tag ${p.published ? 'published' : 'pending'}">${p.published ? 'Publicada' : 'Pendiente'}</span>
+        </div>
+        <div class="actions">
+          <button type="button" data-edit="${p.id}" aria-label="Editar entrada: ${escapeHtml(p.title)}">Editar</button>
+          <button type="button" data-toggle="${p.id}" aria-label="${p.published ? 'Marcar como pendiente' : 'Marcar como publicada'}: ${escapeHtml(p.title)}">${p.published ? 'Marcar pendiente' : 'Marcar publicada'}</button>
+          <button type="button" class="danger" data-del="${p.id}" aria-label="Eliminar entrada: ${escapeHtml(p.title)}">Eliminar</button>
+        </div>
+      </div>`;
+    }).join('');
+    wrap.querySelectorAll('[data-edit]').forEach(btn => {
+      btn.addEventListener('click', () => openEdit(btn.dataset.edit));
+    });
+    wrap.querySelectorAll('[data-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = POSTS.find(x => x.id === btn.dataset.toggle);
+        if(!p) return;
+        p.published = !p.published;
+        save('apt-editor-posts', POSTS);
+        renderDrafts(); renderCode();
+      });
+    });
+    wrap.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(!confirm('¿Eliminar esta entrada del borrador?')) return;
+        POSTS = POSTS.filter(p => p.id !== btn.dataset.del);
+        save('apt-editor-posts', POSTS);
+        renderDrafts(); renderCode();
+      });
+    });
+  }
+
+  function renderTileThumbPicker(){
+    const picker = document.getElementById('tile-thumb-picker');
+    picker.innerHTML = '';
+    // opción "automático"
+    const autoOpt = document.createElement('div');
+    autoOpt.className = 'tile-thumb-opt tile-thumb-none' + (tileThumbIdx === -1 ? ' selected' : '');
+    autoOpt.dataset.thumbIdx = '-1';
+    autoOpt.innerHTML = `<div class="checkmark">✓</div><span>Auto<br>(1ª img)</span>`;
+    autoOpt.addEventListener('click', () => { tileThumbIdx = -1; renderTileThumbPicker(); });
+    picker.appendChild(autoOpt);
+    // una opción por imagen
+    currentImages.forEach((img, i) => {
+      const opt = document.createElement('div');
+      opt.className = 'tile-thumb-opt' + (tileThumbIdx === i ? ' selected' : '');
+      opt.dataset.thumbIdx = i;
+      opt.innerHTML = `<img src="${img.src}" alt=""><div class="checkmark">✓</div>`;
+      opt.addEventListener('click', () => { tileThumbIdx = i; renderTileThumbPicker(); });
+      picker.appendChild(opt);
+    });
+    // si el índice guardado ya no es válido, resetear a auto
+    if(tileThumbIdx >= currentImages.length) tileThumbIdx = -1;
+  }
+
+  function renderImgList(){
+    const wrap = document.getElementById('img-list');
+    wrap.innerHTML = '';
+    currentImages.forEach((img, i) => {
+      const item = document.createElement('div');
+      item.className = 'img-item';
+      item.innerHTML = `
+        <div class="preview-frame">
+          <img src="${img.src}" alt="" style="width:${img.w}%; height:${img.h}%;">
+        </div>
+        <div class="img-controls">
+          <div class="img-caption-text"><span class="img-num">#${i + 1}</span> ${img.caption ? escapeHtmlAttr(img.caption) : '(sin descripción)'}</div>
+          <label>Ancho: <span class="w-val">${img.w}</span>%</label>
+          <input type="range" min="10" max="100" value="${img.w}" class="w-range">
+          <label>Alto: <span class="h-val">${img.h}</span>%</label>
+          <input type="range" min="10" max="100" value="${img.h}" class="h-range">
+          <button type="button" class="img-remove">Quitar esta imagen</button>
+        </div>
+      `;
+      const previewImg = item.querySelector('.preview-frame img');
+      const wRange = item.querySelector('.w-range');
+      const hRange = item.querySelector('.h-range');
+      wRange.addEventListener('input', () => {
+        img.w = parseInt(wRange.value, 10);
+        item.querySelector('.w-val').textContent = img.w;
+        previewImg.style.width = img.w + '%';
+      });
+      hRange.addEventListener('input', () => {
+        img.h = parseInt(hRange.value, 10);
+        item.querySelector('.h-val').textContent = img.h;
+        previewImg.style.height = img.h + '%';
+      });
+      item.querySelector('.img-remove').addEventListener('click', () => {
+        if(tileThumbIdx === i) tileThumbIdx = -1;
+        else if(tileThumbIdx > i) tileThumbIdx--;
+        currentImages.splice(i, 1);
+        renderImgList();
+        renderTileThumbPicker();
+      });
+      wrap.appendChild(item);
+    });
+    renderTileThumbPicker();
+  }
+  function escapeHtmlAttr(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  document.getElementById('img-add-btn').addEventListener('click', () => {
+    const src = document.getElementById('img-src-input').value.trim();
+    if(!src){ toast('Escribí la ruta de la imagen primero'); return; }
+    const caption = document.getElementById('img-caption-input').value.trim();
+    currentImages.push({ src, caption, w: 100, h: 100 });
+    document.getElementById('img-src-input').value = '';
+    document.getElementById('img-caption-input').value = '';
+    renderImgList();
+  });
+
+  function openEdit(id){
+    const p = POSTS.find(x => x.id === id);
+    if(!p) return;
+    editingId = id;
+    document.getElementById('f-title').value = p.title;
+    selectedCat = p.category || '';
+    renderCatPicker();
+    document.getElementById('f-date').value = p.date;
+    document.getElementById('f-device').value = p.device || '';
+    document.getElementById('f-summary').value = p.summary;
+    document.getElementById('f-body').value = (p.body || []).join('\n');
+    currentImages = (p.images || []).map(img => ({
+      src: img.src, caption: img.caption || '',
+      w: img.w || 100, h: img.h || 100
+    }));
+    tileThumbIdx = -1; // al editar, la primera imagen ya es la del tile
+    renderImgList();
+    selectedBgColor = p.bgColor || '';
+    renderBgSwatches();
+    document.getElementById('f-tile-aspect').value = p.tileAspect || '';
+    document.getElementById('submit-entry-btn').textContent = 'Guardar cambios';
+    document.getElementById('cancel-edit-btn').style.display = 'inline-block';
+    window.scrollTo({ top: document.getElementById('entry-form').offsetTop - 20, behavior:'smooth' });
+    document.getElementById('f-title').focus();
+  }
+
+  function resetForm(){
+    editingId = null;
+    document.getElementById('entry-form').reset();
+    document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+    currentImages = [];
+    tileThumbIdx = -1;
+    renderImgList();
+    document.getElementById('f-device').value = load('apt-editor-last-device', '');
+    renderCatPicker();
+    selectedBgColor = '';
+    renderBgSwatches();
+    document.getElementById('submit-entry-btn').textContent = 'Agregar a la lista';
+    document.getElementById('cancel-edit-btn').style.display = 'none';
+  }
+  document.getElementById('cancel-edit-btn').addEventListener('click', resetForm);
+
+  document.getElementById('entry-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const body = document.getElementById('f-body').value
+      .split('\n').map(s => s.trim()).filter(Boolean);
+    // Si eligieron una imagen específica para el tile, moverla al primer lugar
+    let orderedImages = currentImages.map(img => ({
+      src: img.src, caption: img.caption || '', w: img.w, h: img.h
+    }));
+    if(tileThumbIdx > 0 && tileThumbIdx < orderedImages.length){
+      const chosen = orderedImages.splice(tileThumbIdx, 1)[0];
+      orderedImages.unshift(chosen);
+    }
+    const images = orderedImages;
+    const tileAspect = document.getElementById('f-tile-aspect').value;
+    const data = {
+      title: document.getElementById('f-title').value.trim(),
+      category: selectedCat,
+      date: document.getElementById('f-date').value,
+      device: document.getElementById('f-device').value.trim(),
+      summary: document.getElementById('f-summary').value.trim(),
+      body, images
+    };
+    if(tileAspect) data.tileAspect = tileAspect;
+    if(selectedBgColor) data.bgColor = selectedBgColor;
+    save('apt-editor-last-device', data.device);
+    save('apt-editor-last-category', selectedCat);
+    const wasEditing = !!editingId;
+    if(editingId){
+      const idx = POSTS.findIndex(p => p.id === editingId);
+      // Si ya estaba publicada y la editas, vuelve a "pendiente": el
+      // contenido cambió y hay que pegar la versión nueva en index.html.
+      if(idx !== -1){
+        POSTS[idx] = { ...POSTS[idx], ...data, published:false };
+        // Si se deseleccionó el color (volvió a "AUTO"), hay que borrarlo
+        // explícitamente: el spread no elimina claves que ya no vienen en data.
+        if(!data.bgColor) delete POSTS[idx].bgColor;
+      }
+    } else {
+      POSTS.push({ id: uid(), ...data, published:false });
+    }
+    save('apt-editor-posts', POSTS);
+    resetForm();
+    renderDrafts();
+    renderCode();
+    goToPendingCode(wasEditing ? 'Cambios guardados' : 'Entrada agregada');
+  });
+
+  /* Salta directo al bloque de código pendiente y lo copia solo, para
+     que agregar una entrada termine en "listo para pegar en GitHub"
+     sin toques extra. */
+  async function goToPendingCode(label){
+    const codeSection = document.getElementById('code-out');
+    codeSection.closest('section').scrollIntoView({ behavior:'smooth', block:'start' });
+    try{
+      await navigator.clipboard.writeText(codeSection.textContent);
+      toast(`${label} · código copiado ✓`);
+    }catch(e){
+      toast(`${label} · toca "Copiar código" abajo`);
+    }
+  }
+
+
+
+  /* ---------------- generación de código (solo lo pendiente) ---------------- */
+  // Genera el cuerpo de un array (sin corchetes exteriores) para pegar
+  // DENTRO de un array ya existente en index.html, con una coma al final.
+  function arrayBody(list){
+    const clean = list.map(({ published, ...rest }) => rest);
+    const json = JSON.stringify(clean, null, 2);
+    const inner = json.replace(/^\[\n?/, '').replace(/\n?\]$/, '');
+    return inner + ',';
+  }
+
+  function pendingCategories(){ return CATEGORIES.filter(c => !c.published); }
+  function pendingPosts(){
+    return POSTS.filter(p => !p.published).sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+
+  function renderCode(){
+    const newCats = pendingCategories();
+    const newPosts = pendingPosts();
+    document.getElementById('pending-count').textContent = newCats.length + newPosts.length;
+
+    const blocks = [];
+    if(newCats.length){
+      blocks.push(
+`// ---- Categorías nuevas: pega esto dentro de CATEGORIES, antes del "]" ----
+${arrayBody(newCats)}`);
+    }
+    if(newPosts.length){
+      blocks.push(
+`// ---- Entradas nuevas: pega esto dentro de POSTS, antes del "]" ----
+${arrayBody(newPosts)}`);
+    }
+    document.getElementById('code-out').textContent = blocks.length
+      ? blocks.join('\n\n')
+      : '// No hay categorías ni entradas nuevas por publicar.\n// Todo lo que tienes en este borrador ya está marcado como publicado.';
+  }
+
+  function buildBackup(){
+    return {
+      _tipo: 'copia-editor-apt',
+      _fecha: new Date().toISOString(),
+      categories: CATEGORIES,
+      posts: POSTS,
+      lastCategory: selectedCat
+    };
+  }
+
+  function legacyCopyText(text){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try{ ok = document.execCommand('copy'); }catch(err){ ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  document.getElementById('export-backup-btn').addEventListener('click', async () => {
+    const backup = buildBackup();
+    const text = JSON.stringify(backup, null, 2);
+    const stamp = new Date().toISOString().slice(0,10);
+    const filename = `copia-editor-${stamp}.json`;
+
+    // Diálogo real de "Guardar como" — solo funciona en Chrome/Edge de
+    // escritorio o Android, con la página servida por https (o localhost).
+    // En visores de HTML offline o file:// esto no existe y se salta solo.
+    if(window.showSaveFilePicker){
+      try{
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        toast('Copia guardada');
+        return;
+      }catch(err){
+        if(err && err.name === 'AbortError') return; // el usuario canceló el diálogo
+        // si falla por otra razón, cae al método de descarga de siempre
+      }
+    }
+
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Copia descargada');
+  });
+
+  document.getElementById('copy-backup-btn').addEventListener('click', async () => {
+    const text = JSON.stringify(buildBackup(), null, 2);
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast('Copia copiada al portapapeles');
+        return;
+      }catch(err){ /* sigue al siguiente respaldo */ }
+    }
+
+    if(legacyCopyText(text)){
+      toast('Copia copiada al portapapeles');
+      return;
+    }
+
+    // Último recurso: mostrarla en una ventana para copiarla a mano.
+    prompt('No se pudo copiar automáticamente. Copiá el contenido de abajo:', text);
+  });
+
+  document.getElementById('import-backup-btn').addEventListener('click', () => {
+    document.getElementById('import-backup-file').click();
+  });
+
+  document.getElementById('import-backup-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const data = JSON.parse(reader.result);
+        if(!Array.isArray(data.categories) || !Array.isArray(data.posts)){
+          throw new Error('formato inválido');
+        }
+        const ok = confirm(`Esta copia tiene ${data.categories.length} categorías y ${data.posts.length} entradas, del ${new Date(data._fecha || Date.now()).toLocaleString()}.\n\nEsto reemplaza lo que hay ahora en este navegador. ¿Continuar?`);
+        if(!ok) return;
+        CATEGORIES = data.categories;
+        POSTS = data.posts;
+        selectedCat = data.lastCategory || null;
+        save('apt-editor-categories', CATEGORIES);
+        save('apt-editor-posts', POSTS);
+        save('apt-editor-last-category', selectedCat);
+        renderCatPicker();
+        renderCatList();
+        renderDrafts();
+        renderCode();
+        toast('Copia restaurada');
+      }catch(err){
+        alert('No se pudo leer ese archivo como copia válida.');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  function importFromText(text){
+    try{
+      const data = JSON.parse(text.trim());
+      if(!Array.isArray(data.categories) || !Array.isArray(data.posts)){
+        throw new Error('formato inválido');
+      }
+      const ok = confirm(`Esta copia tiene ${data.categories.length} categorías y ${data.posts.length} entradas, del ${new Date(data._fecha || Date.now()).toLocaleString()}.\n\nEsto reemplaza lo que hay ahora en este navegador. ¿Continuar?`);
+      if(!ok) return;
+      CATEGORIES = data.categories;
+      POSTS = data.posts;
+      selectedCat = data.lastCategory || null;
+      save('apt-editor-categories', CATEGORIES);
+      save('apt-editor-posts', POSTS);
+      save('apt-editor-last-category', selectedCat);
+      renderCatPicker();
+      renderCatList();
+      renderDrafts();
+      renderCode();
+      toast('Copia restaurada desde portapapeles');
+    }catch(err){
+      alert('El texto del portapapeles no es una copia válida.\n\nAsegurate de copiar la copia completa con el botón "Copiar copia al portapapeles".');
+    }
+  }
+
+  document.getElementById('paste-backup-btn').addEventListener('click', async () => {
+    // Intento 1: API moderna del portapapeles
+    if(navigator.clipboard && navigator.clipboard.readText){
+      try{
+        const text = await navigator.clipboard.readText();
+        importFromText(text);
+        return;
+      }catch(err){
+        // Si el usuario denegó el permiso, caer al textarea manual
+      }
+    }
+    // Fallback: textarea para pegar a mano (cuando el permiso de lectura no está disponible)
+    const text = prompt('No se pudo leer el portapapeles automáticamente.\nPegá el contenido de la copia acá:');
+    if(text && text.trim()) importFromText(text);
+  });
+
+  document.getElementById('mark-published-btn').addEventListener('click', () => {
+    const newCats = pendingCategories();
+    const newPosts = pendingPosts();
+    if(newCats.length + newPosts.length === 0) return;
+    if(!confirm('¿Ya pegaste y subiste este código a tu index.html en GitHub? Esto lo quitará de la lista de pendientes.')) return;
+    CATEGORIES.forEach(c => c.published = true);
+    POSTS.forEach(p => p.published = true);
+    save('apt-editor-categories', CATEGORIES);
+    save('apt-editor-posts', POSTS);
+    renderCatList(); renderDrafts(); renderCode();
+  });
+
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const text = document.getElementById('code-out').textContent;
+    const msg = document.getElementById('copy-msg');
+    try{
+      await navigator.clipboard.writeText(text);
+      msg.textContent = 'Copiado ✓';
+    }catch(e){
+      msg.textContent = 'No se pudo copiar automáticamente; selecciona el texto manualmente.';
+    }
+    setTimeout(() => msg.textContent = '', 3000);
+  });
+
+  /* ---------------- init ---------------- */
+  // Modo oscuro — sincronizado con index.html via localStorage
+  const themeBtn = document.getElementById('theme-btn');
+  function applyTheme(dark){
+    document.body.classList.toggle('dark-mode', dark);
+    themeBtn.textContent = dark ? '☀️ Modo claro' : '🌙 Modo oscuro';
+    try{ localStorage.setItem('apt-dark', dark ? '1' : '0'); }catch(e){}
+  }
+  try{
+    const saved = localStorage.getItem('apt-dark');
+    if(saved !== null) applyTheme(saved === '1');
+  }catch(e){}
+  themeBtn.addEventListener('click', () => applyTheme(!document.body.classList.contains('dark-mode')));
+
+  document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f-device').value = load('apt-editor-last-device', '');
+  renderCatList();
+  renderCatPicker();
+  renderBgSwatches();
+  renderDrafts();
+  renderCode();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FreeHtml</string>
+    <string name="app_tagline">Your code, ad-free.</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="home_hero_title">Open, edit and preview</string>
+    <string name="home_hero_subtitle">HTML, TXT, JSON, CSS, JS, PDF and Word. All local, no accounts or ads.</string>
+    <string name="load_file">Load file</string>
+    <string name="new_file">New file</string>
+    <string name="recent_files">Recent files</string>
+    <string name="recent_files_hint">Files you open will appear here.</string>
+    <string name="no_recent_files">No recent files yet</string>
+    <string name="unsupported_file">Unsupported format: %1$s</string>
+
+    <string name="new_file_title">Create file</string>
+    <string name="new_file_name">File name</string>
+    <string name="new_file_type">Type</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_file_error">Could not create the file.</string>
+
+    <string name="history_title">History</string>
+    <string name="history_empty">You have not opened any files yet.</string>
+    <string name="history_empty_hint">When you do, they will appear here for quick access.</string>
+    <string name="history_select">Select</string>
+    <string name="history_cancel_selection">Cancel</string>
+    <string name="history_select_all">Select all</string>
+    <string name="history_deselect_all">Deselect all</string>
+    <string name="history_delete_selected">Delete (%1$d)</string>
+    <string name="history_delete_title">Delete files?</string>
+    <plurals name="history_delete_message">
+        <item quantity="one">%1$d file will be removed from history and its access permission released. The original file will not be deleted.</item>
+        <item quantity="other">%1$d files will be removed from history and their access permissions released. The original files will not be deleted.</item>
+    </plurals>
+    <string name="history_delete_confirm">Delete</string>
+    <string name="history_deleted">Files removed from history.</string>
+
+    <string name="editor_title">File</string>
+    <string name="editor_back">Back</string>
+    <string name="editor_save">Save</string>
+    <string name="editor_saved">Changes saved.</string>
+    <string name="editor_save_error">Could not save the file.</string>
+    <string name="editor_tab_view">View</string>
+    <string name="editor_tab_edit">Edit</string>
+    <string name="editor_tab_preview">Preview</string>
+    <string name="editor_toggle_highlight">Toggle syntax highlighting</string>
+    <string name="editor_action_copy">Copy</string>
+    <string name="editor_action_share">Share</string>
+    <string name="editor_action_inspect">Inspect</string>
+    <string name="editor_action_reload">Reload</string>
+    <string name="editor_action_fullscreen">Fullscreen</string>
+    <string name="editor_action_fullscreen_short">Full</string>
+    <string name="editor_action_search">Search</string>
+    <string name="editor_action_zoom">Zoom</string>
+    <string name="editor_search_hint">Search in code…</string>
+    <string name="editor_info_strip">Lines: %1$d · Size: %2$s · Elements: %3$d</string>
+    <string name="editor_exit_fullscreen">Exit fullscreen</string>
+    <string name="editor_copied">Code copied.</string>
+    <string name="editor_inspect_title">Source code</string>
+
+    <string name="folder_access_title">Folder access</string>
+    <string name="folder_access_message">This HTML file loads other files from its folder (CSS, JavaScript, etc.). To display the full site, FreeHtml needs read access to that folder. Files are not modified or uploaded anywhere.</string>
+    <string name="folder_access_select">Select folder</string>
+    <string name="folder_access_later">Not now</string>
+    <string name="editor_empty_title">Empty file</string>
+    <string name="editor_empty_message">This file has no content yet.</string>
+    <string name="editor_error_title">Could not open the file</string>
+    <string name="editor_error_unsupported">The file format is not supported.</string>
+    <string name="editor_error_read">Could not read the content. Check that the file is still available.</string>
+    <string name="editor_retry">Retry</string>
+    <string name="pdf_error_message">Could not load the PDF. Check that the file is still available.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_general">GENERAL</string>
+    <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_section_about">ABOUT</string>
+
+    <string name="settings_recent_history">Recent files history</string>
+    <string name="settings_no_recent_files">No recent files</string>
+    <plurals name="settings_recent_files_count">
+        <item quantity="one">%1$d file</item>
+        <item quantity="other">%1$d files</item>
+    </plurals>
+    <string name="settings_clear_history">Clear</string>
+    <string name="settings_clear_history_title">Clear history?</string>
+    <string name="settings_clear_history_message">Recent files will be removed from the list along with their access permissions. The original files will not be deleted.</string>
+    <string name="settings_clear_history_confirm">Clear history</string>
+    <string name="history_cleared">History cleared.</string>
+
+    <string name="settings_theme_force_light">Force light theme</string>
+    <string name="settings_theme_current">Current: %1$s</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_use_system">Use system theme</string>
+    <string name="settings_theme_help">The switch forces the light or dark theme. Use “System” to follow the device theme.</string>
+
+    <string name="settings_open_source_title">Open Source</string>
+    <string name="settings_open_source_description">FreeHtml is free, ad-free and open source. If you find it useful, you can follow the project on GitHub.</string>
+    <string name="settings_github">View on GitHub</string>
+    <string name="settings_version">Version %1$s (%2$d)</string>
+
+    <string name="settings_incognito_title">Incognito mode</string>
+    <string name="settings_incognito_description">Does not store files in history and does not write changes to disk.</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_change">Change</string>
+    <string name="settings_language_system">System</string>
+    <string name="settings_language_spanish">Spanish</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_french">French</string>
+    <string name="settings_language_portuguese">Portuguese</string>
+    <string name="settings_default_zoom_title">Default zoom</string>
+    <string name="settings_default_zoom_description">Initial code text size in the editor.</string>
+    <string name="settings_link_error">Could not open the link.</string>
+</resources>

@@ -67,4 +67,6 @@ Copyright (C) 2026 bash-666
 
 Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los términos de la **GNU General Public License** publicada por la Free Software Foundation, en su versión 3 (o, si lo prefieres, cualquier versión posterior).
 
+En resumen: puedes usar, copiar, modificar y distribuir el programa, incluso cobrar por las copias. Si compartes una versión modificada, debe seguir siendo libre bajo GPL-3.0, con el código fuente disponible y avisando qué cambiaste. No puedes cerrar el código ni demandar por patentes a quien lo use. Se entrega “tal cual”, sin garantía.
+
 Consulta el archivo [LICENSE](LICENSE) para ver el texto completo de la licencia.

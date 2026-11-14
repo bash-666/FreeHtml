@@ -10,6 +10,12 @@ FreeHtml es un visor y editor de archivos completamente gratuito, libre y sin an
   <img src="https://img.shields.io/badge/anuncios-0-success" alt="Sin anuncios" />
 </p>
 
+## Capturas
+
+| Inicio | Editor | PDF | Word | Ajustes |
+| --- | --- | --- | --- | --- |
+| <img src="docs/screenshots/01-inicio.jpg" width="200" alt="Pantalla de inicio" /> | <img src="docs/screenshots/02-editor.jpg" width="200" alt="Editor de código con resaltado de sintaxis" /> | <img src="docs/screenshots/03-pdf.jpg" width="200" alt="Visor de PDF" /> | <img src="docs/screenshots/04-docx.jpg" width="200" alt="Vista previa de Word" /> | <img src="docs/screenshots/05-ajustes.jpg" width="200" alt="Ajustes" /> |
+
 ## Características
 
 - **Editor de código** con resaltado de sintaxis para HTML, TXT, JSON, CSS y JS.
